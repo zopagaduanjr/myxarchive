@@ -1,2 +1,5 @@
 myxenv/
 config.txt
+**/.DS_Store
+**/.cache
+**/.env
