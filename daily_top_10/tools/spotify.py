@@ -26,10 +26,12 @@ def get_artist_link(artist):
 
 
 def search_item(track, artist):
-    search_q = f'track:{track} artist:{artist}'
+    cleaned_track = track.replace("\'", "")
+    search_q = f'track:{cleaned_track} artist:{artist}'
     url_encoded_search_q = search_q
+    limit = 10
     while True:
-        results = sp.search(q=url_encoded_search_q, market="PH")
+        results = sp.search(q=url_encoded_search_q, limit=limit, market="PH")
         for idx, track_result in enumerate(results['tracks']['items']):
             track_name = track_result['name']
             track_id = track_result['id']
@@ -40,7 +42,8 @@ def search_item(track, artist):
                 time.sleep(5)
                 return track_id
         time.sleep(5)
-        # os.system('clear')
+        print(f'current search queue {search_q}')
+        limit = 50
 
 
 def get_track(track_id):
@@ -92,7 +95,7 @@ def get_stats(data_list):
     return new_data
 
 
-def input_to_spotified_input():
+def input_to_spotified_input_write():
     spotified_input = open('../raw_data/spotified_input.csv', 'w')
     writer = csv.writer(spotified_input)
     with open('../raw_data/input.csv') as csv_file:
@@ -118,14 +121,18 @@ def input_to_spotified_input():
     spotified_input.close()
 
 
-    # initialization station
+def group_spotified_input():
+    # TODO: group csv into dates (august 20, november 30)
+    # return as list of list
+    # [ [august,1,track,artist,track_id], [november,1,track,artist,track_id] ]
+    print("AMDG")
+
+
+# initialization station
 config = dotenv_values(".env")
 
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
     client_id=config['SPOTIFY_CLIENT_ID'],
     client_secret=config['SPOTIFY_CLIENT_SECRET']))
-print("AMDG, initialization success")
-
-
 # testing station
-input_to_spotified_input()
+# read from spotified input and group by date
