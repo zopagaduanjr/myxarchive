@@ -3,12 +3,8 @@ import pprint
 import csv
 import time
 from dotenv import dotenv_values
-from spotipy.oauth2 import SpotifyClientCredentials
-
-# TODOS:
-# create playlist based on reading spotified csv file, particularly grouping csv into date
-# search if playlist already exists by date == playlist name, if not create it
-# check if api handles duplicate add track to playlist
+from spotipy.oauth2 import SpotifyOAuth
+from dateutil import parser
 
 
 # function station
@@ -25,8 +21,12 @@ def get_artist_link(artist):
     return artist['external_urls']['spotify']
 
 
+def get_playlist_name(playlist):
+    return playlist['name']
+
+
 def search_item(track, artist):
-    cleaned_track = track.replace("\'", "")
+    cleaned_track = track.replace("\'", "").replace("\"", "")
     search_q = f'track:{cleaned_track} artist:{artist}'
     url_encoded_search_q = search_q
     limit = 10
@@ -39,7 +39,6 @@ def search_item(track, artist):
             print((idx)+1, track_name, artists, track_id)
             if track.lower() == track_name.lower() and artist.lower() == artists[0].lower():
                 print(f'\neureka! id: {track_id}\n')
-                time.sleep(5)
                 return track_id
         time.sleep(5)
         print(f'current search queue {search_q}')
@@ -95,8 +94,8 @@ def get_stats(data_list):
     return new_data
 
 
-def input_to_spotified_input_write():
-    spotified_input = open('../raw_data/spotified_input.csv', 'w')
+def input_to_spotified_input_write(mode="w"):
+    spotified_input = open('../raw_data/spotified_input.csv', mode)
     writer = csv.writer(spotified_input)
     with open('../raw_data/input.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
@@ -104,7 +103,7 @@ def input_to_spotified_input_write():
             if idx != 0:
                 new_data = get_stats(row)
                 writer.writerow(new_data)
-            else:
+            elif mode == "w" and idx == 0:
                 writer.writerow(["date", "position",
                                  "track_name", "artists_name",
                                 "album_name", "album_release_date",
@@ -122,17 +121,73 @@ def input_to_spotified_input_write():
 
 
 def group_spotified_input():
-    # TODO: group csv into dates (august 20, november 30)
-    # return as list of list
-    # [ [august,1,track,artist,track_id], [november,1,track,artist,track_id] ]
-    print("AMDG")
+    daily_top_tens = {}
+    with open('../raw_data/spotified_input.csv') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for idx, row in enumerate(csv_reader):
+            if idx != 0:
+                data = (row[0], row[1], row[2], row[24])
+                if row[0] not in daily_top_tens:
+                    daily_top_tens[row[0]] = [data]
+                else:
+                    daily_top_tens[row[0]].append(data)
+    return daily_top_tens
+
+
+def create_playlists(top_tens):
+    user_id = sp.me()['id']
+    current_playlists = sp.current_user_playlists()
+    # TODO in future, if playlist is more than 50, use offset to check other pages
+    playlist_names = {x['name']: x['id'] for x in current_playlists['items']}
+    for ten in top_tens:
+        tracks = list(map(lambda n: n[3], top_tens[ten]))
+        tracks.reverse()
+        iso_date = parser.parse(ten)
+        formatted_date = iso_date.strftime("%B %d, %Y")
+        title = f'MYX Daily Top 10 - {formatted_date}'
+        if title not in playlist_names:
+            response = sp.user_playlist_create(user=user_id, name=title)
+            playlist_id = response['id']
+            sp.user_playlist_add_tracks(user_id, playlist_id, tracks)
+        else:
+            playlist_id = playlist_names[title]
+            add_tracks_to_existing_playlist(user_id, playlist_id, tracks)
+
+
+def add_tracks_to_existing_playlist(user_id, playlist_id, tracks):
+    current_tracks = sp.playlist_items(playlist_id, market="PH")
+    current_track_ids = list(
+        map(lambda n: n['track']['id'], current_tracks['items']))
+    for idx, track in enumerate(tracks):
+        if track not in current_track_ids:
+            sp.user_playlist_add_tracks(
+                user_id, playlist_id, [track], idx)
+
+
+def check_input_searchability():
+    with open('../raw_data/input.csv') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for idx, row in enumerate(csv_reader):
+            if idx != 0:
+                search_item(row[2], row[3])
+        print("AMDG clean")
 
 
 # initialization station
 config = dotenv_values(".env")
 
-sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
+scope = "user-read-private,playlist-modify-public,ugc-image-upload"
+sp = spotipy.Spotify(client_credentials_manager=SpotifyOAuth(
     client_id=config['SPOTIFY_CLIENT_ID'],
-    client_secret=config['SPOTIFY_CLIENT_SECRET']))
+    client_secret=config['SPOTIFY_CLIENT_SECRET'], scope=scope,
+    redirect_uri="http://127.0.0.1:9090"))
+
 # testing station
-# read from spotified input and group by date
+print("AMDG")
+
+# check_input_searchability()
+
+# input_to_spotified_input_write("w")
+
+tens = group_spotified_input()
+create_playlists(tens)

@@ -2,14 +2,24 @@ import csv
 import operator
 
 
-def scrape_to_input(date):
-    input = open('../raw_data/input.csv', 'a')
+def scrape_to_input():
+    input = open('../raw_data/input.csv', 'w')
     writer = csv.writer(input)
+    date = "ey"
     with open('../raw_data/scrape.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
+        position = 1
         for idx, row in enumerate(csv_reader):
             if idx != 0:
-                writer.writerow([date, idx, row[0], row[1].strip()])
+                if (len(row) == 1):
+                    date = row[0]
+                    position = 1
+                else:
+                    writer.writerow([date, position, row[0], row[1].strip()])
+                    position += 1
+            else:
+                writer.writerow(["date", "position", "track_name", "artist"])
+
     input.close()
 
 
@@ -30,4 +40,4 @@ def sort_csv(input_csv, output_csv):
 # testing station
 # sort_csv('../raw_data/spotified_input.csv',
 #          '../raw_data/spotified_input_ordered_date.csv')
-# scrape_to_input("2007-08-20")
+scrape_to_input()
