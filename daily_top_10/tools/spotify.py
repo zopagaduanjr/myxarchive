@@ -2,12 +2,20 @@ import spotipy
 import pprint
 import csv
 import time
+import string
 from dotenv import dotenv_values
 from spotipy.oauth2 import SpotifyOAuth
 from dateutil import parser
+from csv_helper import scrape_to_input
 
+# TODO:
+# still add a row to spotified input even if songs is not in spotify, e.g. Brightlights
+# function that checks if name is already in spotified input
+# songs not in spotify exceptions
 
 # function station
+
+
 def pretty_print(val):
     pp = pprint.PrettyPrinter(indent=4)
     pp.pprint(val)
@@ -26,7 +34,13 @@ def get_playlist_name(playlist):
 
 
 def search_item(track, artist):
-    cleaned_track = track.replace("\'", "").replace("\"", "")
+    if track.lower() in spotify_track_unsupported:
+        return None
+
+    equivalent_track = spotify_track_equivalent_name.get(
+        track.lower()) or track
+
+    cleaned_track = equivalent_track.replace("\'", "").replace("\"", "")
     search_q = f'track:{cleaned_track} artist:{artist}'
     url_encoded_search_q = search_q
     limit = 10
@@ -37,8 +51,9 @@ def search_item(track, artist):
             track_id = track_result['id']
             artists = list(map(get_artist_name, track_result['artists']))
             print((idx)+1, track_name, artists, track_id)
-            if track.lower() == track_name.lower() and artist.lower() == artists[0].lower():
+            if equivalent_track.lower() == track_name.lower() and artist.lower() == artists[0].lower():
                 print(f'\neureka! id: {track_id}\n')
+                time.sleep(1)
                 return track_id
         time.sleep(5)
         print(f'current search queue {search_q}')
@@ -56,8 +71,13 @@ def get_track_features(track_id):
 def get_stats(data_list):
     track_id = search_item(data_list[2], data_list[3])
 
+    if track_id is None:
+        return data_list
+
     track = get_track(track_id)
     track_name = track['name']
+    if data_list[2].lower() in spotify_track_equivalent_name:
+        track_name = string.capwords(data_list[2])
     artists = ', '.join(list(map(get_artist_name, track['artists'])))
     track_link = track['external_urls']['spotify']
     artists_link = ', '.join(list(map(get_artist_link, track['artists'])))
@@ -126,7 +146,8 @@ def group_spotified_input():
         csv_reader = csv.reader(csv_file, delimiter=',')
         for idx, row in enumerate(csv_reader):
             if idx != 0:
-                data = (row[0], row[1], row[2], row[24])
+                track_id = row[24] if 24 < len(row) else None
+                data = (row[0], row[1], row[2], track_id)
                 if row[0] not in daily_top_tens:
                     daily_top_tens[row[0]] = [data]
                 else:
@@ -160,8 +181,9 @@ def add_tracks_to_existing_playlist(user_id, playlist_id, tracks):
         map(lambda n: n['track']['id'], current_tracks['items']))
     for idx, track in enumerate(tracks):
         if track not in current_track_ids:
-            sp.user_playlist_add_tracks(
-                user_id, playlist_id, [track], idx)
+            if track is not None:
+                sp.user_playlist_add_tracks(
+                    user_id, playlist_id, [track], idx)
 
 
 def check_input_searchability():
@@ -170,13 +192,19 @@ def check_input_searchability():
         for idx, row in enumerate(csv_reader):
             if idx != 0:
                 search_item(row[2], row[3])
-        print("AMDG clean")
 
 
 # initialization station
 config = dotenv_values(".env")
-
 scope = "user-read-private,playlist-modify-public,ugc-image-upload"
+# lazy way of searching
+spotify_track_equivalent_name = {
+    "make it good": "Make It Good - Radio Edit",
+    "i don't want to be your friend": "I Don't Want to Be Your Friend - Live",
+    "tilt ya head back": "Tilt Ya Head Back - Album Version / Explicit"
+}
+spotify_track_unsupported = ["bright lights"]
+
 sp = spotipy.Spotify(client_credentials_manager=SpotifyOAuth(
     client_id=config['SPOTIFY_CLIENT_ID'],
     client_secret=config['SPOTIFY_CLIENT_SECRET'], scope=scope,
@@ -185,9 +213,12 @@ sp = spotipy.Spotify(client_credentials_manager=SpotifyOAuth(
 # testing station
 print("AMDG")
 
+
+# scrape_to_input()
 # check_input_searchability()
 
 # input_to_spotified_input_write("w")
+# input_to_spotified_input_write("a")
 
-tens = group_spotified_input()
-create_playlists(tens)
+# tens = group_spotified_input()
+# create_playlists(tens)
