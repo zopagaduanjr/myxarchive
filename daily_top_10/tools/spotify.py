@@ -9,9 +9,10 @@ from dateutil import parser
 from csv_helper import scrape_to_input
 
 # TODO:
-# still add a row to spotified input even if songs is not in spotify, e.g. Brightlights
-# function that checks if name is already in spotified input
-# songs not in spotify exceptions
+
+
+# continue until 2013
+# youtube api time
 
 # function station
 
@@ -50,7 +51,7 @@ def search_item(track, artist):
             track_name = track_result['name']
             track_id = track_result['id']
             artists = list(map(get_artist_name, track_result['artists']))
-            print((idx)+1, track_name, artists, track_id)
+            print(f"{(idx)+1}. track={track_name} artist={artists} track_id={track_id}")
             if equivalent_track.lower() == track_name.lower() and artist.lower() == artists[0].lower():
                 print(f'\neureka! id: {track_id}\n')
                 time.sleep(1)
@@ -121,8 +122,10 @@ def input_to_spotified_input_write(mode="w"):
         csv_reader = csv.reader(csv_file, delimiter=',')
         for idx, row in enumerate(csv_reader):
             if idx != 0:
-                new_data = get_stats(row)
-                writer.writerow(new_data)
+                track_exist = is_track_in_spotified_input(row[2], row[0])
+                if not track_exist:
+                    new_data = get_stats(row)
+                    writer.writerow(new_data)
             elif mode == "w" and idx == 0:
                 writer.writerow(["date", "position",
                                  "track_name", "artists_name",
@@ -145,8 +148,8 @@ def group_spotified_input():
     with open('../raw_data/spotified_input.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         for idx, row in enumerate(csv_reader):
-            if idx != 0:
-                track_id = row[24] if 24 < len(row) else None
+            track_id = row[24] if 24 < len(row) else None
+            if idx != 0 and track_id is not None:
                 data = (row[0], row[1], row[2], track_id)
                 if row[0] not in daily_top_tens:
                     daily_top_tens[row[0]] = [data]
@@ -191,8 +194,17 @@ def check_input_searchability():
         csv_reader = csv.reader(csv_file, delimiter=',')
         for idx, row in enumerate(csv_reader):
             if idx != 0:
-                search_item(row[2], row[3])
+                if not is_track_in_spotified_input(row[2], row[0]):
+                    search_item(row[2], row[3])
 
+
+def is_track_in_spotified_input(track, date):
+    with open('../raw_data/spotified_input.csv') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for row in csv_reader:
+            if row[2].lower() == track.lower() and row[0] == date:
+                return True
+    return False
 
 # initialization station
 config = dotenv_values(".env")
@@ -201,9 +213,10 @@ scope = "user-read-private,playlist-modify-public,ugc-image-upload"
 spotify_track_equivalent_name = {
     "make it good": "Make It Good - Radio Edit",
     "i don't want to be your friend": "I Don't Want to Be Your Friend - Live",
-    "tilt ya head back": "Tilt Ya Head Back - Album Version / Explicit"
+    "tilt ya head back": "Tilt Ya Head Back - Album Version / Explicit",
+    "love moves in mysterious ways": "Love Moves in Mysterious Ways - Live"
 }
-spotify_track_unsupported = ["bright lights"]
+spotify_track_unsupported = ["bright lights", "steamy nights"]
 
 sp = spotipy.Spotify(client_credentials_manager=SpotifyOAuth(
     client_id=config['SPOTIFY_CLIENT_ID'],
@@ -212,7 +225,6 @@ sp = spotipy.Spotify(client_credentials_manager=SpotifyOAuth(
 
 # testing station
 print("AMDG")
-
 
 # scrape_to_input()
 # check_input_searchability()
