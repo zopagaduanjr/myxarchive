@@ -51,7 +51,8 @@ def search_item(track, artist):
             track_name = track_result['name']
             track_id = track_result['id']
             artists = list(map(get_artist_name, track_result['artists']))
-            print(f"{(idx)+1}. track={track_name} artist={artists} track_id={track_id}")
+            print(
+                f"{(idx)+1}. track={track_name} artist={artists} track_id={track_id}")
             if equivalent_track.lower() == track_name.lower() and artist.lower() == artists[0].lower():
                 print(f'\neureka! id: {track_id}\n')
                 time.sleep(1)
@@ -163,7 +164,9 @@ def create_playlists(top_tens):
     current_playlists = sp.current_user_playlists()
     # TODO in future, if playlist is more than 50, use offset to check other pages
     playlist_names = {x['name']: x['id'] for x in current_playlists['items']}
+    print(f'current user playlist length {len(playlist_names)}')
     for ten in top_tens:
+        time.sleep(3)
         tracks = list(map(lambda n: n[3], top_tens[ten]))
         tracks.reverse()
         iso_date = parser.parse(ten)
@@ -205,6 +208,7 @@ def is_track_in_spotified_input(track, date):
             if row[2].lower() == track.lower() and row[0] == date:
                 return True
     return False
+
 
 # initialization station
 config = dotenv_values(".env")
