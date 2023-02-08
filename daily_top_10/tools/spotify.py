@@ -41,11 +41,11 @@ def search_item(track, artist):
     if spotify_track_unsupported.get(track.lower()) == artist.lower():
         return None
 
-    equivalent_track = spotify_track_equivalent_name.get(
-        track.lower()) or track
+    equivalent_track, equivalent_artist = spotify_track_equivalent.get(
+        track.lower()) or (track, artist)
 
     cleaned_track = equivalent_track.replace("\'", "").replace("\"", "")
-    search_q = f'track:{cleaned_track} artist:{artist}'
+    search_q = f'track:{cleaned_track} artist:{equivalent_artist}'
     url_encoded_search_q = search_q
     limit = 10
     while True:
@@ -56,7 +56,7 @@ def search_item(track, artist):
             artists = list(map(get_artist_name, track_result['artists']))
             print(
                 f"{(idx)+1}. track={track_name} artist={artists} track_id={track_id}")
-            if equivalent_track.lower() == track_name.lower() and artist.lower() == artists[0].lower():
+            if equivalent_track.lower() == track_name.lower() and equivalent_artist.lower() == artists[0].lower():
                 print(f'\neureka! id: {track_id}\n')
                 time.sleep(1)
                 return track_id
@@ -83,9 +83,10 @@ def get_stats(data_list):
 
     track = get_track(track_id)
     track_name = track['name']
-    if data_list[2].lower() in spotify_track_equivalent_name:
-        track_name = string.capwords(data_list[2])
     artists = ', '.join(list(map(get_artist_name, track['artists'])))
+    if data_list[2].lower() in spotify_track_equivalent:
+        track_name = string.capwords(data_list[2])
+        artists = string.capwords(data_list[3])
     track_link = track['external_urls']['spotify']
     artists_link = ', '.join(list(map(get_artist_link, track['artists'])))
     album = track['album']['name']
@@ -219,21 +220,27 @@ def is_track_in_spotified_input(track, date):
 config = dotenv_values(".env")
 scope = "user-read-private,playlist-modify-public,ugc-image-upload"
 # lazy way of searching, keys should be lower case
-spotify_track_equivalent_name = {
-    "make it good": "Make It Good - Radio Edit",
-    "i don't want to be your friend": "I Don't Want to Be Your Friend - Live",
-    "tilt ya head back": "Tilt Ya Head Back - Album Version / Explicit",
-    "love moves in mysterious ways": "Love Moves in Mysterious Ways - Live",
-    "check on it": "Check On It (feat. Bun B & Slim Thug)",
-    "i'll never get over you getting over me": "I'll Never Get Over You Getting Over Me - Live",
-    "carry my love": "Carry My Love - Amor Cobarde"
+
+spotify_track_equivalent = {
+    "make it good": ("Make It Good - Radio Edit", "a1"),
+    "i don't want to be your friend": ("I Don't Want to Be Your Friend - Live", "nina"),
+    "tilt ya head back": ("Tilt Ya Head Back - Album Version / Explicit", "nelly"),
+    "love moves in mysterious ways": ("Love Moves in Mysterious Ways - Live", "nina"),
+    "check on it": ("Check On It (feat. Bun B & Slim Thug)", "Beyoncé"),
+    "i'll never get over you getting over me": ("I'll Never Get Over You Getting Over Me - Live", "mymp"),
+    "carry my love": ("Carry My Love - Amor Cobarde", "sarah geronimo"),
+    "i'm coming": ("I′m Coming (Feat. Tablo)", "rain"),
+    "you are the music in me": ("you are the music in me", "troy")
 }
+
 spotify_track_unsupported = {
     "bright lights": "billy crawford",
     "steamy nights": "billy crawford",
     "jeepney": "kala",
     "i care": "gary valenciano",
-    "dale candela": "gerald anderson"
+    "dale candela": "gerald anderson",
+    "7 black roses": "chicosci",
+    "radio": "amber davis"
 }
 
 sp = spotipy.Spotify(client_credentials_manager=SpotifyOAuth(
