@@ -9,10 +9,13 @@ from dateutil import parser
 from csv_helper import scrape_to_input
 
 # TODO:
-
+# potential problems in youtube: cueshe, beyonce uses weird letter é - solution use unidecode
+# potential future problem: equivalent_track_name with same name
+# potential future problem: len(playlist) > 50
 
 # continue until 2013
 # youtube api time
+
 
 # function station
 
@@ -35,7 +38,7 @@ def get_playlist_name(playlist):
 
 
 def search_item(track, artist):
-    if track.lower() in spotify_track_unsupported:
+    if spotify_track_unsupported.get(track.lower()) == artist.lower():
         return None
 
     equivalent_track = spotify_track_equivalent_name.get(
@@ -58,6 +61,8 @@ def search_item(track, artist):
                 time.sleep(1)
                 return track_id
         time.sleep(5)
+        # print(f'{equivalent_track.lower()} == {track_name.lower()}')
+        # print(f'{artist.lower()} == {artists[0].lower()}')
         print(f'current search queue {search_q}')
         limit = 50
 
@@ -213,14 +218,23 @@ def is_track_in_spotified_input(track, date):
 # initialization station
 config = dotenv_values(".env")
 scope = "user-read-private,playlist-modify-public,ugc-image-upload"
-# lazy way of searching
+# lazy way of searching, keys should be lower case
 spotify_track_equivalent_name = {
     "make it good": "Make It Good - Radio Edit",
     "i don't want to be your friend": "I Don't Want to Be Your Friend - Live",
     "tilt ya head back": "Tilt Ya Head Back - Album Version / Explicit",
-    "love moves in mysterious ways": "Love Moves in Mysterious Ways - Live"
+    "love moves in mysterious ways": "Love Moves in Mysterious Ways - Live",
+    "check on it": "Check On It (feat. Bun B & Slim Thug)",
+    "i'll never get over you getting over me": "I'll Never Get Over You Getting Over Me - Live",
+    "carry my love": "Carry My Love - Amor Cobarde"
 }
-spotify_track_unsupported = ["bright lights", "steamy nights"]
+spotify_track_unsupported = {
+    "bright lights": "billy crawford",
+    "steamy nights": "billy crawford",
+    "jeepney": "kala",
+    "i care": "gary valenciano",
+    "dale candela": "gerald anderson"
+}
 
 sp = spotipy.Spotify(client_credentials_manager=SpotifyOAuth(
     client_id=config['SPOTIFY_CLIENT_ID'],
