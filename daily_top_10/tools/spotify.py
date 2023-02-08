@@ -240,7 +240,8 @@ spotify_track_unsupported = {
     "i care": "gary valenciano",
     "dale candela": "gerald anderson",
     "7 black roses": "chicosci",
-    "radio": "amber davis"
+    "radio": "amber davis",
+    "gotta go my own way": "nikki gil"
 }
 
 sp = spotipy.Spotify(client_credentials_manager=SpotifyOAuth(
