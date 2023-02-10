@@ -230,7 +230,8 @@ spotify_track_equivalent = {
     "i'll never get over you getting over me": ("I'll Never Get Over You Getting Over Me - Live", "mymp"),
     "carry my love": ("Carry My Love - Amor Cobarde", "sarah geronimo"),
     "i'm coming": ("I′m Coming (Feat. Tablo)", "rain"),
-    "you are the music in me": ("you are the music in me", "troy")
+    "you are the music in me": ("you are the music in me", "troy"),
+    "no air": ("No Air (feat. Chris Brown)", "jordin sparks")
 }
 
 spotify_track_unsupported = {
@@ -241,7 +242,8 @@ spotify_track_unsupported = {
     "dale candela": "gerald anderson",
     "7 black roses": "chicosci",
     "radio": "amber davis",
-    "gotta go my own way": "nikki gil"
+    "gotta go my own way": "nikki gil",
+    "last look": "chicosci"
 }
 
 sp = spotipy.Spotify(client_credentials_manager=SpotifyOAuth(
