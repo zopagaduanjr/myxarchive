@@ -37,7 +37,7 @@ def get_playlist_name(playlist):
     return playlist['name']
 
 
-def search_item(track, artist):
+def search_item(track, artist, stop=False):
     if spotify_track_unsupported.get(track.lower()) == artist.lower():
         return None
 
@@ -61,10 +61,10 @@ def search_item(track, artist):
                 time.sleep(1)
                 return track_id
         time.sleep(5)
-        # print(f'{equivalent_track.lower()} == {track_name.lower()}')
-        # print(f'{artist.lower()} == {artists[0].lower()}')
         print(f'current search queue {search_q}')
         limit = 50
+        if stop:
+            return "break"
 
 
 def get_track(track_id):
@@ -204,7 +204,9 @@ def check_input_searchability():
         for idx, row in enumerate(csv_reader):
             if idx != 0:
                 if not is_track_in_spotified_input(row[2], row[0]):
-                    search_item(row[2], row[3])
+                    result = search_item(row[2], row[3], stop=True)
+                    if result == "break":
+                        break
 
 
 def is_track_in_spotified_input(track, date):
@@ -231,7 +233,9 @@ spotify_track_equivalent = {
     "carry my love": ("Carry My Love - Amor Cobarde", "sarah geronimo"),
     "i'm coming": ("I′m Coming (Feat. Tablo)", "rain"),
     "you are the music in me": ("you are the music in me", "troy"),
-    "no air": ("No Air (feat. Chris Brown)", "jordin sparks")
+    "no air": ("No Air (feat. Chris Brown)", "jordin sparks"),
+    "honesty": ("Honestly - Live", "rachelle ann go"),
+    "4 minutes": ("4 Minutes (feat. Justin Timberlake & Timbaland)", "madonna")
 }
 
 spotify_track_unsupported = {
@@ -243,7 +247,8 @@ spotify_track_unsupported = {
     "7 black roses": "chicosci",
     "radio": "amber davis",
     "gotta go my own way": "nikki gil",
-    "last look": "chicosci"
+    "last look": "chicosci",
+    "hear my heart": "nikki gil"
 }
 
 sp = spotipy.Spotify(client_credentials_manager=SpotifyOAuth(
