@@ -65,7 +65,6 @@ def search_item(track, artist, stop=False):
             print(
                 f"{(idx)+1}. track={track_name} artist={artists} track_id={track_id} url={url}")
             if equivalent_track.lower() == track_name.lower() and equivalent_artist.lower() == artists[0].lower():
-                print(f'\neureka! id: {track_id}\n')
                 album_release_date = int(
                     track_result['album']['release_date'][:4])
                 if album_oldest_year is None or album_release_date < album_oldest_year:
@@ -73,11 +72,12 @@ def search_item(track, artist, stop=False):
                     correct_track_id = track_id
                 time.sleep(1)
         if correct_track_id is not None:
+            print(f'\neureka! id: {correct_track_id}\n')
             return correct_track_id
         print(f'current search queue {search_q}')
         limit = 50
         if stop:
-            return "break"
+            break
 
 
 def get_track(track_id):
@@ -296,6 +296,6 @@ print("AMDG")
 # input_to_spotified_input_write("a")
 
 # tens = group_spotified_input()
-# create_playlists(tens, delete=True)
+# create_playlists(tens, delete=False)
 
 # get_current_playlist()
