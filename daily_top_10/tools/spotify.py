@@ -12,7 +12,9 @@ from csv_helper import scrape_to_input
 # potential problems in youtube: cueshe, beyonce uses weird letter é - solution use unidecode
 # potential future problem: equivalent_track_name with same name
 # potential future problem: len(playlist) > 50
-
+# potential future problem: invalid albums, e.g. 6 cyclemind saludo latest album is a minus one, fix is to get the oldest album > meaning oldest track
+# TODO: create map for special case tracks, looking at you a very special love, sarah g
+# i think my best bet is to implement the oldest album theory, and then clean from there.
 # continue until 2013
 # youtube api time
 
@@ -40,6 +42,9 @@ def get_playlist_name(playlist):
 def search_item(track, artist, stop=False):
     if spotify_track_unsupported.get(track.lower()) == artist.lower():
         return None
+    edge_case_correct_track = spotify_correct_track.get((track.lower(), artist.lower()))
+    if edge_case_correct_track:
+        return edge_case_correct_track
 
     equivalent_track, equivalent_artist = spotify_track_equivalent.get(
         track.lower()) or (track, artist)
@@ -50,17 +55,25 @@ def search_item(track, artist, stop=False):
     limit = 10
     while True:
         results = sp.search(q=url_encoded_search_q, limit=limit, market="PH")
+        correct_track_id = None
+        album_oldest_year = None
         for idx, track_result in enumerate(results['tracks']['items']):
             track_name = track_result['name']
             track_id = track_result['id']
+            url = track_result['external_urls']['spotify']
             artists = list(map(get_artist_name, track_result['artists']))
             print(
-                f"{(idx)+1}. track={track_name} artist={artists} track_id={track_id}")
+                f"{(idx)+1}. track={track_name} artist={artists} track_id={track_id} url={url}")
             if equivalent_track.lower() == track_name.lower() and equivalent_artist.lower() == artists[0].lower():
                 print(f'\neureka! id: {track_id}\n')
+                album_release_date = int(
+                    track_result['album']['release_date'][:4])
+                if album_oldest_year is None or album_release_date < album_oldest_year:
+                    album_oldest_year = album_release_date
+                    correct_track_id = track_id
                 time.sleep(1)
-                return track_id
-        time.sleep(5)
+        if correct_track_id is not None:
+            return correct_track_id
         print(f'current search queue {search_q}')
         limit = 50
         if stop:
@@ -165,7 +178,7 @@ def group_spotified_input():
     return daily_top_tens
 
 
-def create_playlists(top_tens):
+def create_playlists(top_tens, delete=False):
     user_id = sp.me()['id']
     current_playlists = sp.current_user_playlists()
     # TODO in future, if playlist is more than 50, use offset to check other pages
@@ -184,18 +197,22 @@ def create_playlists(top_tens):
             sp.user_playlist_add_tracks(user_id, playlist_id, tracks)
         else:
             playlist_id = playlist_names[title]
-            add_tracks_to_existing_playlist(user_id, playlist_id, tracks)
+            add_tracks_to_existing_playlist(user_id, playlist_id, tracks, delete=delete)
 
 
-def add_tracks_to_existing_playlist(user_id, playlist_id, tracks):
+def add_tracks_to_existing_playlist(user_id, playlist_id, tracks, delete=False):
     current_tracks = sp.playlist_items(playlist_id, market="PH")
     current_track_ids = list(
         map(lambda n: n['track']['id'], current_tracks['items']))
-    for idx, track in enumerate(tracks):
-        if track not in current_track_ids:
-            if track is not None:
-                sp.user_playlist_add_tracks(
-                    user_id, playlist_id, [track], idx)
+    if delete:
+        sp.user_playlist_remove_all_occurrences_of_tracks(user_id,playlist_id,current_track_ids)
+        sp.user_playlist_add_tracks(user_id, playlist_id, tracks)
+    else:
+        for idx, track in enumerate(tracks):
+            if track not in current_track_ids:
+                if track is not None:
+                    sp.user_playlist_add_tracks(
+                        user_id, playlist_id, [track], idx)
 
 
 def check_input_searchability():
@@ -217,6 +234,13 @@ def is_track_in_spotified_input(track, date):
                 return True
     return False
 
+def get_current_playlist():
+    user_id = sp.me()['id']
+    current_playlists = sp.current_user_playlists()
+    # TODO in future, if playlist is more than 50, use offset to check other pages
+    playlist_names = {x['name']: x['id'] for x in current_playlists['items']}
+    print(f'current user playlist length {len(playlist_names)}')
+    print(playlist_names)
 
 # initialization station
 config = dotenv_values(".env")
@@ -235,7 +259,8 @@ spotify_track_equivalent = {
     "you are the music in me": ("you are the music in me", "troy"),
     "no air": ("No Air (feat. Chris Brown)", "jordin sparks"),
     "honesty": ("Honestly - Live", "rachelle ann go"),
-    "4 minutes": ("4 Minutes (feat. Justin Timberlake & Timbaland)", "madonna")
+    "4 minutes": ("4 Minutes (feat. Justin Timberlake & Timbaland)", "madonna"),
+    "all i have": ("All I Have (feat. LL Cool J)", "jennifer lopez")
 }
 
 spotify_track_unsupported = {
@@ -248,9 +273,14 @@ spotify_track_unsupported = {
     "radio": "amber davis",
     "gotta go my own way": "nikki gil",
     "last look": "chicosci",
-    "hear my heart": "nikki gil"
+    "hear my heart": "nikki gil",
+    "the search is over": "rachelle ann go",
+    "just stand up!": "artists stand up to cancer",
 }
 
+spotify_correct_track = {
+    ("a very special love", "sarah geronimo"): "3eAM3mpO1Up7TPNDcrGU5y"
+}
 sp = spotipy.Spotify(client_credentials_manager=SpotifyOAuth(
     client_id=config['SPOTIFY_CLIENT_ID'],
     client_secret=config['SPOTIFY_CLIENT_SECRET'], scope=scope,
@@ -266,4 +296,6 @@ print("AMDG")
 # input_to_spotified_input_write("a")
 
 # tens = group_spotified_input()
-# create_playlists(tens)
+# create_playlists(tens, delete=True)
+
+# get_current_playlist()
