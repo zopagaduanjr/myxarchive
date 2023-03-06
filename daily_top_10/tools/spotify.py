@@ -258,7 +258,8 @@ spotify_track_equivalent = {
     "no air": ("No Air (feat. Chris Brown)", "jordin sparks"),
     "honesty": ("Honestly - Live", "rachelle ann go"),
     "4 minutes": ("4 Minutes (feat. Justin Timberlake & Timbaland)", "madonna"),
-    "all i have": ("All I Have (feat. LL Cool J)", "jennifer lopez")
+    "all i have": ("All I Have (feat. LL Cool J)", "jennifer lopez"),
+    "how do you sleep?": ("How Do You Sleep? - Radio Edit Remix", "jesse mccartney"),
 }
 
 spotify_track_unsupported = {
