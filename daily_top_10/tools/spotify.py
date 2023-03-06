@@ -140,10 +140,18 @@ def input_to_spotified_input_write(mode="w"):
         csv_reader = csv.reader(csv_file, delimiter=',')
         for idx, row in enumerate(csv_reader):
             if idx != 0:
-                track_exist = is_track_in_spotified_input(row[2], row[0])
-                if not track_exist:
-                    new_data = get_stats(row)
-                    writer.writerow(new_data)
+                track_date_exist = is_track_date_in_spotified_input(row[2], row[0])
+                if not track_date_exist:
+                    track_exist = is_track_in_spotified_input(row[2],row[3])
+                    if track_exist is not None:
+                        print(f"AMDG reusing track {row[2]}")
+                        reuse_track = list(track_exist)
+                        reuse_track[0] = row[0]
+                        reuse_track[1] = row[1]
+                        writer.writerow(tuple(reuse_track))
+                    else:
+                        new_data = get_stats(row)
+                        writer.writerow(new_data)
             elif mode == "w" and idx == 0:
                 writer.writerow(["date", "position",
                                  "track_name", "artists_name",
@@ -218,19 +226,29 @@ def check_input_searchability():
         csv_reader = csv.reader(csv_file, delimiter=',')
         for idx, row in enumerate(csv_reader):
             if idx != 0:
-                if not is_track_in_spotified_input(row[2], row[0]):
+                if not is_track_date_in_spotified_input(row[2], row[0]):
                     result = search_item(row[2], row[3], stop=True)
                     if result == "break":
                         break
 
 
-def is_track_in_spotified_input(track, date):
+def is_track_date_in_spotified_input(track, date):
     with open('../raw_data/spotified_input.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         for row in csv_reader:
             if row[2].lower() == track.lower() and row[0] == date:
                 return True
     return False
+
+def is_track_in_spotified_input(track, artist):
+    equivalent_track, equivalent_artist = spotify_track_equivalent.get(track.lower()) or (track, artist)
+    with open('../raw_data/spotified_input.csv') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for row in csv_reader:
+            if row[2].lower() == equivalent_track.lower() and row[3].lower() == equivalent_artist.lower():
+                return row
+    return None
+
 
 def get_current_playlist():
     user_id = sp.me()['id']
