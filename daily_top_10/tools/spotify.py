@@ -15,7 +15,7 @@ from csv_helper import scrape_to_input
 # potential future problem: invalid albums, e.g. 6 cyclemind saludo latest album is a minus one, fix is to get the oldest album > meaning oldest track
 # TODO: create map for special case tracks, looking at you a very special love, sarah g
 # i think my best bet is to implement the oldest album theory, and then clean from there.
-# continue until 2013
+# continue until 2014
 # youtube api time
 
 
@@ -74,10 +74,8 @@ def search_item(track, artist, stop=False):
         if correct_track_id is not None:
             print(f'\neureka! id: {correct_track_id}\n')
             return correct_track_id
-        print(f'current search queue {search_q}')
-        limit = 50
         if stop:
-            break
+            raise Exception(f"Sorry, can't search {search_q}")
 
 
 def get_track(track_id):
@@ -291,6 +289,8 @@ print("AMDG")
 
 # scrape_to_input()
 # check_input_searchability()
+
+# search_item("Jai ho! (you are my destiny)", "A.R. Rahman", True)
 
 # input_to_spotified_input_write("w")
 # input_to_spotified_input_write("a")
