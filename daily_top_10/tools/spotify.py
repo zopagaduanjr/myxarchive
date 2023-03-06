@@ -265,7 +265,6 @@ spotify_track_unsupported = {
     "bright lights": "billy crawford",
     "steamy nights": "billy crawford",
     "jeepney": "kala",
-    "i care": "gary valenciano",
     "dale candela": "gerald anderson",
     "7 black roses": "chicosci",
     "radio": "amber davis",
