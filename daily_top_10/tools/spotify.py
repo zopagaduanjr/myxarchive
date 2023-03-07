@@ -11,10 +11,6 @@ from csv_helper import scrape_to_input
 # TODO:
 # potential problems in youtube: cueshe, beyonce uses weird letter é - solution use unidecode
 # potential future problem: equivalent_track_name with same name
-# potential future problem: len(playlist) > 50
-# potential future problem: invalid albums, e.g. 6 cyclemind saludo latest album is a minus one, fix is to get the oldest album > meaning oldest track
-# TODO: create map for special case tracks, looking at you a very special love, sarah g
-# i think my best bet is to implement the oldest album theory, and then clean from there.
 # continue until 2014
 # youtube api time
 
@@ -184,14 +180,16 @@ def group_spotified_input():
     return daily_top_tens
 
 
-def create_playlists(top_tens, delete=False):
+def create_playlists(top_tens, delete=False, skip=False):
     user_id = sp.me()['id']
-    current_playlists = sp.current_user_playlists()
-    # TODO in future, if playlist is more than 50, use offset to check other pages
-    playlist_names = {x['name']: x['id'] for x in current_playlists['items']}
-    print(f'current user playlist length {len(playlist_names)}')
+    offset = 0
+    current_playlists = sp.current_user_playlists(offset=offset)
+    playlist_names = {}
+    while len(current_playlists['items']) > 0:
+        playlist_names.update({x['name']: x['id'] for x in current_playlists['items']})
+        offset += 50
+        current_playlists = sp.current_user_playlists(offset=offset)
     for ten in top_tens:
-        time.sleep(3)
         tracks = list(map(lambda n: n[3], top_tens[ten]))
         tracks.reverse()
         iso_date = parser.parse(ten)
@@ -201,7 +199,7 @@ def create_playlists(top_tens, delete=False):
             response = sp.user_playlist_create(user=user_id, name=title)
             playlist_id = response['id']
             sp.user_playlist_add_tracks(user_id, playlist_id, tracks)
-        else:
+        elif not skip:
             playlist_id = playlist_names[title]
             add_tracks_to_existing_playlist(user_id, playlist_id, tracks, delete=delete)
 
@@ -251,10 +249,13 @@ def is_track_in_spotified_input(track, artist):
 
 
 def get_current_playlist():
-    user_id = sp.me()['id']
-    current_playlists = sp.current_user_playlists()
-    # TODO in future, if playlist is more than 50, use offset to check other pages
-    playlist_names = {x['name']: x['id'] for x in current_playlists['items']}
+    offset = 0
+    current_playlists = sp.current_user_playlists(offset=offset)
+    playlist_names = {}
+    while len(current_playlists['items']) > 0:
+        playlist_names.update({x['name']: x['id'] for x in current_playlists['items']})
+        offset += 50
+        current_playlists = sp.current_user_playlists(offset=offset)
     print(f'current user playlist length {len(playlist_names)}')
     print(playlist_names)
 
@@ -317,6 +318,6 @@ print("AMDG")
 # input_to_spotified_input_write("a")
 
 # tens = group_spotified_input()
-# create_playlists(tens, delete=False)
+# create_playlists(tens, delete=False, skip=True)
 
 # get_current_playlist()
