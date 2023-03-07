@@ -278,6 +278,8 @@ spotify_track_equivalent = {
     "4 minutes": ("4 Minutes (feat. Justin Timberlake & Timbaland)", "madonna"),
     "all i have": ("All I Have (feat. LL Cool J)", "jennifer lopez"),
     "how do you sleep?": ("How Do You Sleep? - Radio Edit Remix", "jesse mccartney"),
+    "diamond shotgun": ("Diamond Shotgun (Lock & Load)", "chicosci"),
+    "higante": ("Higante (feat. Hardware Syndrome)", "francism")
 }
 
 spotify_track_unsupported = {
@@ -292,6 +294,7 @@ spotify_track_unsupported = {
     "hear my heart": "nikki gil",
     "the search is over": "rachelle ann go",
     "just stand up!": "artists stand up to cancer",
+    "blue tomorrow": "super junior-m"
 }
 
 spotify_correct_track = {
