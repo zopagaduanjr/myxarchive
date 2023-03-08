@@ -243,7 +243,7 @@ def is_track_in_spotified_input(track, artist):
     with open('../raw_data/spotified_input.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         for row in csv_reader:
-            if row[2].lower() == equivalent_track.lower() and row[3].lower() == equivalent_artist.lower():
+            if row[2].lower() == equivalent_track.lower() and equivalent_artist.lower() in row[3].lower().split(","):
                 return row
     return None
 
@@ -295,7 +295,8 @@ spotify_track_unsupported = {
     "hear my heart": "nikki gil",
     "the search is over": "rachelle ann go",
     "just stand up!": "artists stand up to cancer",
-    "blue tomorrow": "super junior-m"
+    "blue tomorrow": "super junior-m",
+    "bata": "bbs"
 }
 
 spotify_correct_track = {
@@ -312,7 +313,7 @@ print("AMDG")
 # scrape_to_input()
 # check_input_searchability()
 
-# search_item("Jai ho! (you are my destiny)", "A.R. Rahman", True)
+# search_item("airplanes", "b.o.b", True)
 
 # input_to_spotified_input_write("w")
 # input_to_spotified_input_write("a")
