@@ -280,7 +280,9 @@ spotify_track_equivalent = {
     "all i have": ("All I Have (feat. LL Cool J)", "jennifer lopez"),
     "how do you sleep?": ("How Do You Sleep? - Radio Edit Remix", "jesse mccartney"),
     "diamond shotgun": ("Diamond Shotgun (Lock & Load)", "chicosci"),
-    "higante": ("Higante (feat. Hardware Syndrome)", "francism")
+    "higante": ("Higante (feat. Hardware Syndrome)", "francism"),
+    "hurricanes and suns": ("Hurricanes And Suns - New Track 2009", "tokio hotel"),
+    "walang natira": ("Walang Natira (feat. Sheng Belmonte)", "gloc 9")
 }
 
 spotify_track_unsupported = {
@@ -300,7 +302,9 @@ spotify_track_unsupported = {
 }
 
 spotify_correct_track = {
-    ("a very special love", "sarah geronimo"): "3eAM3mpO1Up7TPNDcrGU5y"
+    ("a very special love", "sarah geronimo"): "3eAM3mpO1Up7TPNDcrGU5y",
+    ("that should be me (remix)", "justin bieber"): "42wmRq3kfUUuyszlkWQbPS"
+    
 }
 sp = spotipy.Spotify(client_credentials_manager=SpotifyOAuth(
     client_id=config['SPOTIFY_CLIENT_ID'],
@@ -313,7 +317,7 @@ print("AMDG")
 # scrape_to_input()
 # check_input_searchability()
 
-# search_item("airplanes", "b.o.b", True)
+# search_item("walang natira", "gloc 9", True)
 
 # input_to_spotified_input_write("w")
 # input_to_spotified_input_write("a")
