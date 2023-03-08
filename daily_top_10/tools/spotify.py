@@ -93,7 +93,7 @@ def get_stats(data_list):
     artists = ', '.join(list(map(get_artist_name, track['artists'])))
     if data_list[2].lower() in spotify_track_equivalent:
         track_name = string.capwords(data_list[2])
-        artists = string.capwords(data_list[3])
+        # artists = string.capwords(data_list[3])
     track_link = track['external_urls']['spotify']
     artists_link = ', '.join(list(map(get_artist_link, track['artists'])))
     album = track['album']['name']
@@ -283,7 +283,10 @@ spotify_track_equivalent = {
     "higante": ("Higante (feat. Hardware Syndrome)", "francism"),
     "hurricanes and suns": ("Hurricanes And Suns - New Track 2009", "tokio hotel"),
     "walang natira": ("Walang Natira (feat. Sheng Belmonte)", "gloc 9"),
-    "next to you": ("Next To You (feat. Justin Bieber)","chris brown")
+    "next to you": ("Next To You (feat. Justin Bieber)","chris brown"),
+    "sari-saring kwento": ("sari saring kwento", "champ lui pio"),
+    "jet lag": ("Jet Lag (feat. Natasha Bedingfield)", "simple plan"),
+    "that should be me (remix)": ("that should be me", "justin bieber")
 }
 
 spotify_track_unsupported = {
@@ -302,6 +305,7 @@ spotify_track_unsupported = {
     "bata": "bbs",
     "wala na tayo": "bbs",
     "pawiin": "bbs",
+    "habang buhay": "bbs"
 }
 
 spotify_correct_track = {
