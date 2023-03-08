@@ -282,7 +282,8 @@ spotify_track_equivalent = {
     "diamond shotgun": ("Diamond Shotgun (Lock & Load)", "chicosci"),
     "higante": ("Higante (feat. Hardware Syndrome)", "francism"),
     "hurricanes and suns": ("Hurricanes And Suns - New Track 2009", "tokio hotel"),
-    "walang natira": ("Walang Natira (feat. Sheng Belmonte)", "gloc 9")
+    "walang natira": ("Walang Natira (feat. Sheng Belmonte)", "gloc 9"),
+    "next to you": ("Next To You (feat. Justin Bieber)","chris brown")
 }
 
 spotify_track_unsupported = {
@@ -298,7 +299,9 @@ spotify_track_unsupported = {
     "the search is over": "rachelle ann go",
     "just stand up!": "artists stand up to cancer",
     "blue tomorrow": "super junior-m",
-    "bata": "bbs"
+    "bata": "bbs",
+    "wala na tayo": "bbs",
+    "pawiin": "bbs",
 }
 
 spotify_correct_track = {
