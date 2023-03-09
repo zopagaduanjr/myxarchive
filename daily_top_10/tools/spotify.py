@@ -320,6 +320,7 @@ spotify_track_unsupported = {
     "wait": "david archuleta",
     "tuloy": "sarah geronimo",
     "gayuma": "abra",
+    "tonight": "jessica sanchez",
 }
 
 spotify_correct_track = {
@@ -339,7 +340,7 @@ print("AMDG")
 # scrape_to_input()
 # check_input_searchability()
 
-# search_item("walang natira", "gloc 9", True)
+# search_item("tonight", "jessica sanchez", True)
 
 # input_to_spotified_input_write("w")
 # input_to_spotified_input_write("a")
