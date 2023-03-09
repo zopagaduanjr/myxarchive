@@ -86,7 +86,15 @@ def get_stats(data_list):
     track_id = search_item(data_list[2], data_list[3])
 
     if track_id is None:
-        return data_list
+        return (data_list[0], data_list[1], data_list[2],
+                data_list[3],"None","None",
+                "None","None","None",
+                "None","None","None",
+                "None","None","None",
+                "None","None", "None",
+                "None", "None",
+                "None","None","None","None",
+                "None","None")
 
     track = get_track(track_id)
     track_name = track['name']
