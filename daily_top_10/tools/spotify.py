@@ -49,6 +49,7 @@ def search_item(track, artist, stop=False):
     search_q = f'track:{cleaned_track} artist:{equivalent_artist}'
     url_encoded_search_q = search_q
     limit = 10
+    time.sleep(1)
     while True:
         results = sp.search(q=url_encoded_search_q, limit=limit, market="PH")
         correct_track_id = None
@@ -66,7 +67,6 @@ def search_item(track, artist, stop=False):
                 if album_oldest_year is None or album_release_date < album_oldest_year:
                     album_oldest_year = album_release_date
                     correct_track_id = track_id
-                time.sleep(1)
         if correct_track_id is not None:
             print(f'\neureka! id: {correct_track_id}\n')
             return correct_track_id
