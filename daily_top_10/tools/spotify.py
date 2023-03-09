@@ -321,6 +321,8 @@ spotify_track_unsupported = {
     "tuloy": "sarah geronimo",
     "gayuma": "abra",
     "tonight": "jessica sanchez",
+    "i like that": "before you exit",
+    "ilusyon": "abra",
 }
 
 spotify_correct_track = {
