@@ -297,7 +297,8 @@ spotify_track_equivalent = {
     "jet lag": ("Jet Lag (feat. Natasha Bedingfield)", "simple plan"),
     "that should be me (remix)": ("that should be me", "justin bieber"),
     "safe & sound": ("Safe & Sound - from The Hunger Games Soundtrack", "taylor swift"),
-    "both of us": ("Both of Us (feat. Taylor Swift)", "b.o.b")
+    "both of us": ("Both of Us (feat. Taylor Swift)", "b.o.b"),
+    "let me go": ("Let Me Go (feat. Chad Kroeger)", "avril lavigne")
 }
 
 spotify_track_unsupported = {
