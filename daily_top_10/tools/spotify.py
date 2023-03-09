@@ -296,7 +296,8 @@ spotify_track_equivalent = {
     "sari-saring kwento": ("sari saring kwento", "champ lui pio"),
     "jet lag": ("Jet Lag (feat. Natasha Bedingfield)", "simple plan"),
     "that should be me (remix)": ("that should be me", "justin bieber"),
-    "safe & sound": ("Safe & Sound - from The Hunger Games Soundtrack", "taylor swift")
+    "safe & sound": ("Safe & Sound - from The Hunger Games Soundtrack", "taylor swift"),
+    "both of us": ("Both of Us (feat. Taylor Swift)", "b.o.b"),
 }
 
 spotify_track_unsupported = {
@@ -322,7 +323,8 @@ spotify_track_unsupported = {
 
 spotify_correct_track = {
     ("a very special love", "sarah geronimo"): "3eAM3mpO1Up7TPNDcrGU5y",
-    ("that should be me (remix)", "justin bieber"): "42wmRq3kfUUuyszlkWQbPS"
+    ("that should be me (remix)", "justin bieber"): "42wmRq3kfUUuyszlkWQbPS",
+    ("bagsakan", "parokya ni edgar"): "0WggsdZ39AJmidAB4oYgpv"
     
 }
 sp = spotipy.Spotify(client_credentials_manager=SpotifyOAuth(
