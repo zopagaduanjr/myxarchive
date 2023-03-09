@@ -297,7 +297,7 @@ spotify_track_equivalent = {
     "jet lag": ("Jet Lag (feat. Natasha Bedingfield)", "simple plan"),
     "that should be me (remix)": ("that should be me", "justin bieber"),
     "safe & sound": ("Safe & Sound - from The Hunger Games Soundtrack", "taylor swift"),
-    "both of us": ("Both of Us (feat. Taylor Swift)", "b.o.b"),
+    "both of us": ("Both of Us (feat. Taylor Swift)", "b.o.b")
 }
 
 spotify_track_unsupported = {
@@ -319,6 +319,7 @@ spotify_track_unsupported = {
     "habang buhay": "bbs",
     "wait": "david archuleta",
     "tuloy": "sarah geronimo",
+    "gayuma": "abra",
 }
 
 spotify_correct_track = {
