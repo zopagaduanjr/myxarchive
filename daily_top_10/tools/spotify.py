@@ -199,6 +199,7 @@ def create_playlists(top_tens, delete=False, skip=False):
         current_playlists = sp.current_user_playlists(offset=offset)
     for ten in top_tens:
         tracks = list(map(lambda n: n[3], top_tens[ten]))
+        tracks = list(filter(lambda a: a != 'None', tracks))
         tracks.reverse()
         iso_date = parser.parse(ten)
         formatted_date = iso_date.strftime("%B %d, %Y")
@@ -294,7 +295,8 @@ spotify_track_equivalent = {
     "next to you": ("Next To You (feat. Justin Bieber)","chris brown"),
     "sari-saring kwento": ("sari saring kwento", "champ lui pio"),
     "jet lag": ("Jet Lag (feat. Natasha Bedingfield)", "simple plan"),
-    "that should be me (remix)": ("that should be me", "justin bieber")
+    "that should be me (remix)": ("that should be me", "justin bieber"),
+    "safe & sound": ("Safe & Sound - from The Hunger Games Soundtrack", "taylor swift")
 }
 
 spotify_track_unsupported = {
@@ -313,7 +315,9 @@ spotify_track_unsupported = {
     "bata": "bbs",
     "wala na tayo": "bbs",
     "pawiin": "bbs",
-    "habang buhay": "bbs"
+    "habang buhay": "bbs",
+    "wait": "david archuleta",
+    "tuloy": "sarah geronimo",
 }
 
 spotify_correct_track = {
