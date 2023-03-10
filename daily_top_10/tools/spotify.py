@@ -45,7 +45,7 @@ def search_item(track, artist, stop=False):
     equivalent_track, equivalent_artist = spotify_track_equivalent.get(
         track.lower()) or (track, artist)
 
-    cleaned_track = equivalent_track.replace("\'", "").replace("\"", "")
+    cleaned_track = equivalent_track.replace("\'", "").replace("\"", "").replace("+","\+")
     search_q = f'track:{cleaned_track} artist:{equivalent_artist}'
     url_encoded_search_q = search_q
     limit = 10
@@ -301,7 +301,8 @@ spotify_track_equivalent = {
     "let me go": ("Let Me Go (feat. Chad Kroeger)", "avril lavigne"),
     "unshakable": ("Unshakable: Tribute and Benefit for the Victims of Typhoon Haiyan", "slapshock"),
     "who you love": ("Who You Love (feat. Katy Perry)", "john mayer"),
-    "drunk in love": ("Drunk in Love (feat. Jay-Z)", "beyoncé")
+    "drunk in love": ("Drunk in Love (feat. Jay-Z)", "beyoncé"),
+    "maybe this time": ('Maybe This Time - From "Maybe This Time"', "sarah geronimo"),
 }
 
 spotify_track_unsupported = {
@@ -330,6 +331,8 @@ spotify_track_unsupported = {
     "midas": "abra",
     "kiss you": "karylle",
     "do the moves": "sarah geronimo",
+    "dangerous": "before you exit",
+    "kapiling kita": "karylle",
 }
 
 spotify_correct_track = {
