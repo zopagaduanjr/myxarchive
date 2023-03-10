@@ -298,7 +298,10 @@ spotify_track_equivalent = {
     "that should be me (remix)": ("that should be me", "justin bieber"),
     "safe & sound": ("Safe & Sound - from The Hunger Games Soundtrack", "taylor swift"),
     "both of us": ("Both of Us (feat. Taylor Swift)", "b.o.b"),
-    "let me go": ("Let Me Go (feat. Chad Kroeger)", "avril lavigne")
+    "let me go": ("Let Me Go (feat. Chad Kroeger)", "avril lavigne"),
+    "unshakable": ("Unshakable: Tribute and Benefit for the Victims of Typhoon Haiyan", "slapshock"),
+    "who you love": ("Who You Love (feat. Katy Perry)", "john mayer"),
+    "drunk in love": ("Drunk in Love (feat. Jay-Z)", "beyoncé")
 }
 
 spotify_track_unsupported = {
@@ -324,6 +327,9 @@ spotify_track_unsupported = {
     "tonight": "jessica sanchez",
     "i like that": "before you exit",
     "ilusyon": "abra",
+    "midas": "abra",
+    "kiss you": "karylle",
+    "do the moves": "sarah geronimo",
 }
 
 spotify_correct_track = {
