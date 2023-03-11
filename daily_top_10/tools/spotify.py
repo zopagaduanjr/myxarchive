@@ -303,6 +303,7 @@ spotify_track_equivalent = {
     "who you love": ("Who You Love (feat. Katy Perry)", "john mayer"),
     "drunk in love": ("Drunk in Love (feat. Jay-Z)", "beyoncé"),
     "maybe this time": ('Maybe This Time - From "Maybe This Time"', "sarah geronimo"),
+    "businessman": ("Businessman (Live)","gloc 9")
 }
 
 spotify_track_unsupported = {
