@@ -3,3 +3,4 @@ config.txt
 **/.DS_Store
 **/.cache
 **/.env
+daily_top_10/tools/secret.json
