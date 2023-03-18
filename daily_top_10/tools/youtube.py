@@ -1,3 +1,4 @@
+import time
 import pprint
 import csv
 import os
@@ -46,7 +47,7 @@ def init_oauth2():
     return googleapiclient.discovery.build(
         api_service_name, api_version, credentials=credentials)
     
-def create_playlist(youtube, title):
+def youtube_create_playlist(youtube, title):
     request = youtube.playlists().insert(
         part="snippet",
         body={
@@ -56,12 +57,37 @@ def create_playlist(youtube, title):
         }
     )
     response = request.execute()
+    return response['id']
+
+def youtube_add_song_to_playlist(youtube, playlist_id,video_id):
+    request = youtube.playlistItems().insert(
+        part="snippet",
+        body={
+          "snippet": {
+            "playlistId": playlist_id,
+            "resourceId": {
+              "kind": "youtube#video",
+              "videoId": video_id
+            }
+          }
+        }
+    )
+    response = request.execute()
 
 def search(track, artist):
     api = Api(access_token=config['YOUTUBE_OAUTH2_ACCESS_TOKEN'])
     r = api.search_by_keywords(q=f"{track} {artist}", search_type=["video"], count=1, limit=1)
     item = r.items[0]
-    print(f"track: {track} artist: {artist}\n{item.snippet.title}: {item.id.videoId} \n https://www.youtube.com/watch?v={item.id.videoId} \n\n")
+    # print(f"track: {track} artist: {artist}\n{item.snippet.title}: {item.id.videoId} \n https://www.youtube.com/watch?v={item.id.videoId} \n\n")
+    return item.id.videoId
+
+def search_multiple_songs(songs):
+    results = []
+    songs.reverse()
+    for song in songs:
+        id = search(song[2],song[3])
+        results.append(id)
+    return results
 
 def group_spotified_input():
     daily_top_tens = {}
@@ -83,13 +109,21 @@ def top_tens_to_playlist(top_tens):
         formatted_date = iso_date.strftime("%B %d, %Y")
         title = f'MYX Daily Top 10 - {formatted_date}'
         if title in current_playlists:
-            # playlist_id = current_playlists[title]
+            continue
+            playlist_id = current_playlists[title]
+            song_ids = search_multiple_songs(top_tens[ten])
+            for s_id in song_ids:
+                youtube_add_song_to_playlist(youtube, playlist_id,s_id)
+                time.sleep(2)
             # get_playlist_items(playlist_id=playlist_id)
-            continue
         else:
-            continue
-            # create_playlist(youtube,title)
-        raise Exception(f"Sorry,")
+            playlist_id = youtube_create_playlist(youtube,title)
+            time.sleep(3)
+            song_ids = search_multiple_songs(top_tens[ten])
+            for s_id in song_ids:
+                youtube_add_song_to_playlist(youtube, playlist_id,s_id)
+                time.sleep(2)
+            raise Exception(f"Sorry,")
 
 
 scopes = ["https://www.googleapis.com/auth/youtube.force-ssl"]
@@ -105,12 +139,12 @@ config = dotenv_values(".env")
 # generate_oauth2_token()
 
 # youtube section
-# youtube = init_oauth2()
+youtube = init_oauth2()
 
 
 print("AMDG")
-# tens = group_spotified_input()
-# top_tens_to_playlist(tens)
+tens = group_spotified_input()
+top_tens_to_playlist(tens)
 
 #use pyyoutube to search
 #use raw youtube python to create playlist and add tracks
