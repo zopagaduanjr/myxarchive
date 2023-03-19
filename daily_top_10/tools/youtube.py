@@ -122,9 +122,89 @@ def top_tens_to_playlist(top_tens):
             song_ids = search_multiple_songs(top_tens[ten])
             for s_id in song_ids:
                 youtube_add_song_to_playlist(youtube, playlist_id,s_id)
+                #TODO: add youtube_link to youtubed_input
+                print(f"AMDG song id is {s_id}")
                 time.sleep(2)
+            song_ids.reverse()
+            for index in range(len(top_tens[ten])):
+                youtube_id = song_ids[index]
+                song_position = top_tens[ten][index][1]
+                zed = spotified_to_youtubed(ten, song_position, youtube_id)
+                print(zed)
             raise Exception(f"Sorry,")
 
+
+def spotified_to_youtubed(date, position, youtube_id, mode="a"):
+    youtubed_input = open('../raw_data/youtubed_input.csv', mode)
+    writer = csv.writer(youtubed_input)
+    with open('../raw_data/spotified_input.csv') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for idx, row in enumerate(csv_reader):
+            if idx != 0:
+                if row[0] == date and row[1] == position:
+                    youtubed_row = spotify_to_youtube_row(row, youtube_id)
+                    writer.writerow(youtubed_row)
+                    youtubed_input.close()
+                    return row
+            elif mode == "w" and idx == 0:
+                writer.writerow(["date", "position",
+                                 "track_name", "artists_name",
+                                 "track_link", "youtube_link",
+                                "album_name", "album_release_date",
+                                  "artists_link",
+                                 "album_link", "duration_ms",
+                                 "popularity", "explicit",
+                                 "danceability", "energy",
+                                 "key", "loudness",
+                                 "mode", "speechiness",
+                                 "acousticness", "instrumentalness",
+                                 "liveness", "valence",
+                                 "tempo", "time_signature",
+                                 "track_id", "album_id"])
+    youtubed_input.close()
+                
+def spotify_to_youtube_row(row, youtube_id):
+    youtube_link = f"https://www.youtube.com/watch?v={youtube_id}"
+    date = row[0]
+    position = row[1]
+    track_name = row[2]
+    artists_name = row[3]
+    album_name = row[4]
+    album_release_date = row[5]
+    track_link = row[6]
+    artists_link = row[7]
+    album_link = row[8]
+    duration_ms = row[9]
+    popularity = row[10]
+    explicit = row[11]
+    danceability = row[12]
+    energy = row[13]
+    key = row[14]
+    loudness = row[15]
+    mode = row[16]
+    speechiness = row[17]
+    acousticness = row[18]
+    instrumentalness = row[19]
+    liveness = row[20]
+    valence = row[21]
+    tempo = row[22]
+    time_signature = row[23]
+    track_id = row[24]
+    album_id = row[25]
+    return (date,position,
+            track_name,artists_name,
+            track_link,youtube_link,
+            album_name,album_release_date,
+            artists_link,
+            album_link,duration_ms,
+            popularity,explicit,
+            danceability,energy,
+            key,loudness,
+            mode,speechiness,
+            acousticness,instrumentalness,
+            liveness,valence,
+            tempo,time_signature,
+            track_id,album_id)
 
 scopes = ["https://www.googleapis.com/auth/youtube.force-ssl"]
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
@@ -139,13 +219,15 @@ config = dotenv_values(".env")
 # generate_oauth2_token()
 
 # youtube section
-youtube = init_oauth2()
+# youtube = init_oauth2()
 
 
 print("AMDG")
 tens = group_spotified_input()
-top_tens_to_playlist(tens)
+top_tens_to_playlistv2(tens)
 
 #use pyyoutube to search
 #use raw youtube python to create playlist and add tracks
-#TODO: add track function
+#TODO: add youtube_link to spotified_input
+#TODO: create new csv file called youtubed_input
+#TODO: rearrange columns into ...artist_name,track_link,youtube_link
