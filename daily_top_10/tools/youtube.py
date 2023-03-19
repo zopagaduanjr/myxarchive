@@ -102,12 +102,15 @@ def group_spotified_input():
                     daily_top_tens[row[0]].append(data)
     return daily_top_tens
 
-def top_tens_to_playlist(top_tens):
+def top_tens_to_playlist(top_tens, limit = 1):
     current_playlists = get_playlist()
+    currently_added = 0
     for ten in top_tens:
         iso_date = parser.parse(ten)
         formatted_date = iso_date.strftime("%B %d, %Y")
         title = f'MYX Daily Top 10 - {formatted_date}'
+        if currently_added == limit:
+            raise Exception(f"Sorry,")
         if title in current_playlists:
             continue
             playlist_id = current_playlists[title]
@@ -118,20 +121,21 @@ def top_tens_to_playlist(top_tens):
             # get_playlist_items(playlist_id=playlist_id)
         else:
             playlist_id = youtube_create_playlist(youtube,title)
+            print(f"playlist {title} created")
             time.sleep(3)
             song_ids = search_multiple_songs(top_tens[ten])
             for s_id in song_ids:
                 youtube_add_song_to_playlist(youtube, playlist_id,s_id)
-                #TODO: add youtube_link to youtubed_input
-                print(f"AMDG song id is {s_id}")
                 time.sleep(2)
+            print("---all songs added to playlist---")
             song_ids.reverse()
-            for index in range(len(top_tens[ten])):
+            reversed_top_ten = top_tens[ten]
+            reversed_top_ten.reverse()
+            for index in range(len(reversed_top_ten)):
                 youtube_id = song_ids[index]
-                song_position = top_tens[ten][index][1]
+                song_position = reversed_top_ten[index][1]
                 zed = spotified_to_youtubed(ten, song_position, youtube_id)
-                print(zed)
-            raise Exception(f"Sorry,")
+            currently_added += 1
 
 
 def spotified_to_youtubed(date, position, youtube_id, mode="a"):
@@ -223,11 +227,8 @@ config = dotenv_values(".env")
 
 
 print("AMDG")
-tens = group_spotified_input()
-top_tens_to_playlistv2(tens)
+# tens = group_spotified_input()
+# top_tens_to_playlist(tens)
 
 #use pyyoutube to search
 #use raw youtube python to create playlist and add tracks
-#TODO: add youtube_link to spotified_input
-#TODO: create new csv file called youtubed_input
-#TODO: rearrange columns into ...artist_name,track_link,youtube_link
