@@ -31,6 +31,10 @@ def get_playlist():
     # pretty_print(playlists_by_mine.nextPageToken)
     result = {}
     result.update({x.snippet.title: x.id for x in playlists_by_mine.items})
+    print(len(result))
+    print(result)
+    if len(result) >= 50:
+        raise Exception(f"Sorry,")
     return result
 
 def get_playlist_items(playlist_id):
@@ -106,12 +110,14 @@ def top_tens_to_playlist(top_tens, limit = 1):
     current_playlists = get_playlist()
     currently_added = 0
     for ten in top_tens:
+        print(f"AMDG currently_added {currently_added}")
         iso_date = parser.parse(ten)
         formatted_date = iso_date.strftime("%B %d, %Y")
         title = f'MYX Daily Top 10 - {formatted_date}'
         if currently_added == limit:
             raise Exception(f"Sorry,")
         if title in current_playlists:
+            print(f"AMDG {title} exists already")
             continue
             playlist_id = current_playlists[title]
             song_ids = search_multiple_songs(top_tens[ten])
@@ -134,7 +140,7 @@ def top_tens_to_playlist(top_tens, limit = 1):
             for index in range(len(reversed_top_ten)):
                 youtube_id = song_ids[index]
                 song_position = reversed_top_ten[index][1]
-                zed = spotified_to_youtubed(ten, song_position, youtube_id)
+                spotified_to_youtubed(ten, song_position, youtube_id)
             currently_added += 1
 
 
@@ -228,7 +234,7 @@ config = dotenv_values(".env")
 
 print("AMDG")
 # tens = group_spotified_input()
-# top_tens_to_playlist(tens)
+# top_tens_to_playlist(tens, limit=5)
 
 #use pyyoutube to search
 #use raw youtube python to create playlist and add tracks
