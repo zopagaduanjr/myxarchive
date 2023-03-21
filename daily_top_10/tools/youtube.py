@@ -234,7 +234,7 @@ config = dotenv_values(".env")
 
 print("AMDG")
 # tens = group_spotified_input()
-# top_tens_to_playlist(tens, limit=5)
+# top_tens_to_playlist(tens, limit=6)
 
 #use pyyoutube to search
 #use raw youtube python to create playlist and add tracks
