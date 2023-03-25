@@ -25,16 +25,20 @@ def generate_oauth2_token():
     print(access_token)
 
 def get_playlist():
+    playlists = []
     api = Api(access_token=config['YOUTUBE_OAUTH2_ACCESS_TOKEN'])
     playlists_by_mine = api.get_playlists(mine=True, count=50)
-    #TODO: use nextPageToken if playlist exceed 50
-    # pretty_print(playlists_by_mine.nextPageToken)
+    playlists.append(playlists_by_mine)
+    next_page_token = playlists_by_mine.nextPageToken
+    while next_page_token:
+        print(f"token {next_page_token}")
+        next_playlist = api.get_playlists(mine=True, count=50, page_token=next_page_token)
+        next_page_token = next_playlist.nextPageToken
     result = {}
-    result.update({x.snippet.title: x.id for x in playlists_by_mine.items})
+    for pl in playlists:
+        result.update({x.snippet.title: x.id for x in pl.items})
     print(len(result))
-    print(result)
-    if len(result) >= 50:
-        raise Exception(f"Sorry,")
+    # print(result)
     return result
 
 def get_playlist_items(playlist_id):
