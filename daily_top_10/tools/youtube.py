@@ -33,12 +33,13 @@ def get_playlist():
     while next_page_token:
         print(f"token {next_page_token}")
         next_playlist = api.get_playlists(mine=True, count=50, page_token=next_page_token)
+        playlists.append(next_playlist)
         next_page_token = next_playlist.nextPageToken
     result = {}
     for pl in playlists:
         result.update({x.snippet.title: x.id for x in pl.items})
     print(len(result))
-    # print(result)
+    print(result)
     return result
 
 def get_playlist_items(playlist_id):
@@ -237,6 +238,7 @@ config = dotenv_values(".env")
 
 
 print("AMDG")
+get_playlist()
 # tens = group_spotified_input()
 # top_tens_to_playlist(tens, limit=6)
 
