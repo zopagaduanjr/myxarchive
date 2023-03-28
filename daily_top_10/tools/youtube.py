@@ -238,7 +238,6 @@ config = dotenv_values(".env")
 
 
 print("AMDG")
-get_playlist()
 # tens = group_spotified_input()
 # top_tens_to_playlist(tens, limit=6)
 
